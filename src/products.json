@@ -6,7 +6,7 @@
     "stock": 2,
     "price": 500,
     "code": "122RTZ",
-    "thumbnail": []
+    "thumbnail": "/img/tecladoInalambrico.png"
   },
   {
     "id": "44b85bae-142b-47e3-9d25-6bcc78f62d24",
@@ -15,7 +15,7 @@
     "stock": 10,
     "price": 200,
     "code": "122FSC",
-    "thumbnail": []
+    "thumbnail": "img/auricularesBluetooth.jpg"
   },
   {
     "id": "d4f6f9f0-a350-4dde-850c-1a6385b93e61",
@@ -24,6 +24,12 @@
     "stock": 7,
     "price": 1500,
     "code": "234FSC",
-    "thumbnail": []
+    "thumbnail": "/img/mouseInalambrico.jpg"
+  },
+  {
+    "id": "8ff4e4a3-2550-40ff-b405-810ce7af347a",
+    "title": "microfono",
+    "price": 1200,
+    "thumbnail": "/img/microInalambrico.jpeg"
   }
 ]
