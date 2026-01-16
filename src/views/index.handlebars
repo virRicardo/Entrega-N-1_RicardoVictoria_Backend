@@ -1,0 +1,79 @@
+<h1 class="store-title">LANG TecnoTandil</h1>
+
+<p class="store-description">
+  Somos en Tandil el único comercio que ofrece soluciones tecnológicas
+  para empresas y particulares.
+</p>
+
+<div class="products-grid">
+  {{#each products}}
+    <div class="product-card">
+
+      <h3 class="product-title">{{this.title}}</h3>
+
+      <p class="product-description">
+        {{this.description}}
+      </p>
+
+      <p class="product-price">
+        $ {{this.price}}
+      </p>
+
+      <div class="product-actions">
+        <a
+          href="/products/{{this._id}}"
+          class="btn secondary"
+        >
+          Ver detalle
+        </a>
+
+        <form
+          action="/api/carts/{{../cartId}}/products/{{this._id}}"
+          method="POST"
+        >
+          <button type="submit" class="btn primary">
+            🛒 Agregar
+          </button>
+        </form>
+      </div>
+
+    </div>
+  {{/each}}
+</div>
+
+<div class="pagination">
+  {{#if hasPrevPage}}
+    <a href="/products?page={{prevPage}}" class="page-link">
+      ← Anterior
+    </a>
+  {{/if}}
+
+  <span class="page-info">
+    Página {{page}} de {{totalPages}}
+  </span>
+
+  {{#if hasNextPage}}
+    <a href="/products?page={{nextPage}}" class="page-link">
+      Siguiente →
+    </a>
+  {{/if}}
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

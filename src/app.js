@@ -1,33 +1,80 @@
+
 import express from "express";
-import ProductManager from "./productManager.js";
-import CartManager from "./cartManager.js";
-import { engine } from "express-handlebars";
+import handlebars from "express-handlebars";
 import { Server } from "socket.io";
 import path from "path";
 import { fileURLToPath } from "url";
+import connectDB from "./config/db.js";
+import cartsRouter from "./routes/carts.router.js";
+import viewsRouter from "./routes/views.router.js";
+import productsRouter from "./routes/products.router.js";
+import methodOverride from "method-override";
 
 const app = express();
+
+connectDB();
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const productManager = new ProductManager("./src/products.json");
-const cartManager = new CartManager("./src/carts.json");
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "public")));
-
-app.engine("handlebars", engine());
+app.engine(
+  "handlebars",
+  handlebars.engine({
+    helpers: {
+      multiply: (a, b) => a * b
+    }
+  })
+);
 app.set("view engine", "handlebars");
 app.set("views", path.join(__dirname, "views"));
 
+
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+app.use(methodOverride("_method"));
+
+app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static("src/public"));
+
+
+app.use("/api/products", productsRouter);
+app.use("/api/carts", cartsRouter); 
+app.use("/", viewsRouter);
+
+const server = app.listen(8080, () => {
+  console.log("Servidor iniciado en el puerto 8080");
+});
+
+const io = new Server(server);
+
 app.get("/api/products", async (req, res) => {
   try {
-    const products = await productManager.getProducts();
-    res.status(200).json(products);
+    const result = await productManager.getProducts(req.query);
+
+    res.json({
+      status: "success",
+      payload: result.docs,
+      totalPages: result.totalPages,
+      prevPage: result.prevPage,
+      nextPage: result.nextPage,
+      page: result.page,
+      hasPrevPage: result.hasPrevPage,
+      hasNextPage: result.hasNextPage,
+      prevLink: result.hasPrevPage
+        ? `/api/products?page=${result.prevPage}`
+        : null,
+      nextLink: result.hasNextPage
+        ? `/api/products?page=${result.nextPage}`
+        : null
+    });
+
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({
+      status: "error",
+      error: error.message
+    });
   }
 });
 
@@ -127,11 +174,28 @@ app.post("/api/carts/:cid/product/:pid", async (req, res) => {
   }
 });
 
-const server = app.listen(8080, () => {
-  console.log("Servidor iniciado en el puerto 8080");
+
+app.delete("/api/carts/:cid/products/:pid", async (req, res) => {
+  try {
+    const cart = await cartManager.deleteProductFromCart(
+      req.params.cid,
+      req.params.pid
+    );
+    res.json({ status: "success", cart });
+  } catch (error) {
+    res.status(500).json({ status: "error", error: error.message });
+  }
 });
 
-const io = new Server(server);
+app.delete("/api/carts/:cid", async (req, res) => {
+  try {
+    const cart = await cartManager.clearCart(req.params.cid);
+    res.json({ status: "success", cart });
+  } catch (error) {
+    res.status(500).json({ status: "error", error: error.message });
+  }
+});
+
 
 io.on("connection", async (socket) => {
   console.log("Nuevo cliente conectado");

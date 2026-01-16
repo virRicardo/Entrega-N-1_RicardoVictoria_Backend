@@ -1,0 +1,44 @@
+<h1 class="page-title">Detalle del Producto</h1>
+
+<div class="product-detail">
+
+  <h2 class="product-title">{{product.title}}</h2>
+
+  <p class="product-description">
+    {{product.description}}
+  </p>
+
+  <div class="product-data">
+    <p><strong>Precio:</strong> ${{product.price}}</p>
+    <p><strong>Stock disponible:</strong> {{product.stock}}</p>
+    <p><strong>Categoría:</strong> {{product.category}}</p>
+
+    <p>
+      <strong>Estado:</strong>
+      {{#if product.status}}
+        <span class="status available">Disponible</span>
+      {{else}}
+        <span class="status unavailable">No disponible</span>
+      {{/if}}
+    </p>
+  </div>
+
+  {{#if product.status}}
+    <form
+      action="/api/carts/{{cartId}}/products/{{product._id}}"
+      method="POST"
+      class="add-to-cart-form"
+    >
+      <button type="submit" class="btn primary">
+        🛒 Agregar al carrito
+      </button>
+    </form>
+  {{else}}
+    <p class="out-of-stock">Producto sin stock</p>
+  {{/if}}
+
+  <div class="navigation">
+    <a href="/products" class="btn secondary">← Volver a productos</a>
+  </div>
+
+</div>

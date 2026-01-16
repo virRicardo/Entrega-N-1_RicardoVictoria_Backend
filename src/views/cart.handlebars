@@ -1,0 +1,55 @@
+<h1 class="cart-title">🛒 Mi Carrito</h1>
+<p class="cart-subtitle">Revisá tus productos antes de finalizar la compra</p>
+
+{{#if products.length}}
+
+<div class="cart-container">
+  {{#each products}}
+    <div class="cart-item">
+      <div class="cart-info">
+        <h3>{{this.product.title}}</h3>
+        <p class="cart-desc">{{this.product.description}}</p>
+      </div>
+
+      <div class="cart-price">
+        <p>$ {{this.product.price}}</p>
+        <span>Cant: {{this.quantity}}</span>
+        <strong>$ {{multiply this.product.price this.quantity}}</strong>
+      </div>
+
+      <form 
+  action="/api/carts/{{../cartId}}/products/{{this.product._id}}?_method=DELETE"
+  method="POST"
+  onsubmit="return confirm('¿Eliminar este producto del carrito?')"
+>
+  <button type="submit">❌</button>
+</form>
+
+    </div>
+  {{/each}}
+</div>
+
+<hr>
+
+<div class="cart-actions">
+  <a href="/products" class="btn secondary">← Seguir comprando</a>
+
+  <form 
+    action="/api/carts/{{cartId}}" 
+    method="POST"
+    onsubmit="return confirm('¿Vaciar carrito completo?')"
+  >
+    <input type="hidden" name="_method" value="DELETE">
+    <button class="btn danger">Vaciar carrito</button>
+  </form>
+</div>
+
+{{else}}
+
+<p class="empty-cart">El carrito está vacío 😢</p>
+<a href="/products" class="btn primary">Ir a productos</a>
+
+{{/if}}
+
+
+
